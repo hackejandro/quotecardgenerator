@@ -27,7 +27,7 @@
     --brand-orange:rgb(240,82,60);
     --logo-coral:#ed5e46;
     --font-serif:'freight-display-pro','freight-text-pro',Lora,Georgia,serif;
-    --font-sans:'Geist',Lato,system-ui,sans-serif;
+    --font-sans:'freight-sans-pro','freight-sans','Geist',Lato,system-ui,sans-serif;
   }
   body{background:#0e0e0e;color:#e8e8e8;font-family:var(--font-sans);font-size:13px;min-height:100vh;}
   .layout{display:flex;min-height:100vh;}
@@ -78,13 +78,13 @@
 
   #card{position:relative;overflow:hidden;background:#f5b393;}
   .card-grad{position:absolute;inset:0;}
-  .big-o{position:absolute;font-family:'freight-display-pro','freight-text-pro',Georgia,'Times New Roman',serif;font-weight:400;color:#fff;line-height:1;pointer-events:none;white-space:pre;}
+  .card-ring{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
   .card-body{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;}
   #cardInner{display:block;}
   .tag-wrap{line-height:0;}
   .tag-wrap svg{display:block;}
 
-  .card-quote{font-family:var(--font-sans);font-weight:400;color:#15152b;}
+  .card-quote{font-family:var(--font-sans);font-weight:300;color:#15152b;}
   .card-quote b{font-weight:700;}
   .card-attr{font-family:var(--font-sans);font-weight:600;color:#15152b;opacity:.85;}
 
@@ -199,7 +199,9 @@
       <div id="cardScale">
         <div id="card">
           <div class="card-grad" id="cardGrad"></div>
-          <div class="big-o" id="bigO">O</div>
+          <svg class="card-ring" id="cardRing" viewBox="0 0 1080 1350">
+            <text id="oText" text-anchor="middle" fill="#ffffff" font-family="'freight-display-pro','freight-text-pro',Georgia,'Times New Roman',serif">O</text>
+          </svg>
           <div class="card-body" id="cardBody">
             <div id="cardInner">
               <div class="tag-wrap" id="tagWrap"></div>
@@ -221,8 +223,10 @@
   const COLORS = ['#EF523A','#7CEF3A','#3AD7EF','#AD3AEF'];
   let selectedColor = COLORS[0];
 
-  // Locked background "O" placement (from approved layout)
-  const O_CFG = { char:'O', opacity:1, size:2900, x:84, y:69 };
+  // Background "O" — Freight Display Pro glyph, auto-measured to fill the frame
+  // height and centred vertically. fill=1.0 means the O is exactly as tall as the
+  // card; left = where the O's left edge sits (fraction of width).
+  const O_CFG = { fill:1.0, left:0.30, opacity:0.95 };
 
   const el = id => document.getElementById(id);
   let CARD_W = 1080, CARD_H = 1350, PAD = 88;
@@ -253,6 +257,7 @@
     const [w,h]=el('format').value.split('x').map(Number);
     CARD_W=w; CARD_H=h;
     el('card').style.width=w+'px'; el('card').style.height=h+'px';
+    el('cardRing').setAttribute('viewBox','0 0 '+w+' '+h);
     placeWordmark(); render();
   }
 
@@ -286,6 +291,24 @@
     el('tagWrap').style.marginBottom=Math.round(fs*0.62)+'px';
   }
 
+  // Measure the actual rendered "O" glyph and scale it to fill the frame height,
+  // then centre it vertically. Works regardless of which font resolves.
+  function fitO(){
+    const t=el('oText');
+    t.setAttribute('opacity', O_CFG.opacity);
+    t.setAttribute('y', 0);
+    t.setAttribute('font-size', 1000);
+    let bb;
+    try{ bb=t.getBBox(); }catch(e){ return; }
+    if(!bb || !bb.height) return;
+    const ratio=bb.height/1000;
+    const S=Math.round(CARD_H*O_CFG.fill/ratio);
+    t.setAttribute('font-size', S);
+    bb=t.getBBox();
+    t.setAttribute('y', Math.round(CARD_H/2-(bb.y+bb.height/2)));
+    t.setAttribute('x', Math.round(O_CFG.left*CARD_W+bb.width/2));
+  }
+
   function quoteHtml(raw){
     let s=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     s=s.replace(/\*\*([\s\S]+?)\*\*/g,'<b>$1</b>');
@@ -299,14 +322,8 @@
     el('cardGrad').style.background=
       `linear-gradient(${ang}deg, ${selectedColor} 0%, ${lighten(selectedColor,0.55)} 50%, #ffffff 100%)`;
 
-    // big O glyph — locked position/size
-    const o=el('bigO');
-    o.style.display='block';
-    o.textContent=O_CFG.char;
-    o.style.opacity=O_CFG.opacity;
-    o.style.fontSize=O_CFG.size+'px';
-    o.style.left=O_CFG.x+'%'; o.style.top=O_CFG.y+'%';
-    o.style.transform='translate(-50%,-54%)';
+    // background "O" glyph — measured to fill frame height & centre vertically
+    fitO();
 
     // attribution
     const attr=el('attrInput').value.trim(), attrEl=el('cardAttr');
