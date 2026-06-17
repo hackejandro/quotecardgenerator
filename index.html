@@ -23,6 +23,7 @@
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js"></script>
 
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -205,6 +206,7 @@
           <div class="card-grad" id="cardGrad"></div>
           <svg class="card-ring" id="cardRing" viewBox="0 0 1080 1350">
             <defs><style id="oFontStyle"></style></defs>
+            <path id="oPath" fill="#ffffff" style="display:none"></path>
             <text id="oText" text-anchor="middle" fill="#ffffff" font-family="'freight-o-embed','freight-display-pro',Georgia,serif">O</text>
           </svg>
           <div class="card-body" id="cardBody">
@@ -231,7 +233,8 @@
   // Background "O" — Freight Display Pro glyph, auto-measured to fill the frame
   // height and centred vertically. fill=1.0 means the O is exactly as tall as the
   // card; left = where the O's left edge sits (fraction of width).
-  const O_CFG = { fill:1.0, left:0.30, opacity:0.95 };
+  const O_CFG = { fill:1.12, left:0.31, opacity:0.95 };
+  let O_PATH = null; // {d, bb} extracted from Freight Display Pro
 
   const el = id => document.getElementById(id);
   let CARD_W = 1080, CARD_H = 1350, PAD = 88;
@@ -297,10 +300,37 @@
     el('tagWrap').style.marginBottom=Math.round(fs*0.62)+'px';
   }
 
-  // Measure the actual rendered "O" glyph and scale it to fill the frame height,
-  // then centre it vertically. Works regardless of which font resolves.
+  // Extract the real Freight Display Pro capital "O" outline as a vector path.
+  async function loadOPath(){
+    if(typeof opentype==='undefined') return;
+    try{
+      const url='https://use.typekit.net/af/c8c65e/000000000000000077359f9c/31/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3';
+      const buf=await (await fetch(url)).arrayBuffer();
+      const font=opentype.parse(buf);
+      const g=font.charToGlyph('O');
+      const p=g.getPath(0,0,font.unitsPerEm);
+      O_PATH={ d:p.toPathData(2), bb:p.getBoundingBox() };
+      render();
+    }catch(e){ O_PATH=null; }
+  }
+
+  // Place the "O": prefer the extracted vector path (exact, predictable, exports
+  // perfectly); fall back to a live glyph if the font couldn't be parsed.
   function fitO(){
-    const t=el('oText');
+    const t=el('oText'), pth=el('oPath');
+    if(O_PATH){
+      t.style.display='none'; pth.style.display='';
+      const b=O_PATH.bb, gh=b.y2-b.y1;
+      const s=(CARD_H*O_CFG.fill)/gh;
+      const tx=O_CFG.left*CARD_W - s*b.x1;
+      const ty=CARD_H/2 - s*((b.y1+b.y2)/2);
+      pth.setAttribute('d', O_PATH.d);
+      pth.setAttribute('transform', `translate(${tx} ${ty}) scale(${s})`);
+      pth.setAttribute('fill-opacity', O_CFG.opacity);
+      return;
+    }
+    // fallback: live glyph measured to fill the frame height
+    pth.style.display='none'; t.style.display='';
     el('oFontStyle').textContent=EMBED_CSS;
     t.setAttribute('opacity', O_CFG.opacity);
     t.setAttribute('y', 0);
@@ -484,6 +514,7 @@
   window.addEventListener('resize', fitPreview);
   document.fonts.ready.then(render);
   embedFonts();
+  loadOPath();
   loadFolderLogo('logo.png', true);
 </script>
 </body>
