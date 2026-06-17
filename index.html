@@ -5,18 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EUObserver Opinion Card Generator</title>
 
-<!-- Freight family via Typekit -->
-<link rel="stylesheet" href="https://use.typekit.net/sdk5rbj.css">
-<!-- Geist (EUObserver sans) -->
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Freight family via Typekit (full euobserver kit: sans, display, etc.) -->
+<link rel="stylesheet" href="https://use.typekit.net/hjt8uie.css">
+<!-- Geist fallback -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-@import url("https://p.typekit.net/p.css?s=1&k=sdk5rbj&ht=tk&f=13464.13465.13466.13467.13472&a=84107799&app=typekit&e=css");
-
-/* Direct Typekit font-file URLs (load even on a local file) */
-@font-face{font-family:"freight-text-pro";src:url("https://use.typekit.net/af/a9e142/00000000000000007735d61f/31/l?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/a9e142/00000000000000007735d61f/31/d?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n4&v=3") format("woff");font-display:swap;font-style:normal;font-weight:400;}
-@font-face{font-family:"freight-text-pro";src:url("https://use.typekit.net/af/9e97d3/00000000000000007735d62a/31/l?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/9e97d3/00000000000000007735d62a/31/d?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n7&v=3") format("woff");font-display:swap;font-style:normal;font-weight:700;}
-@font-face{font-family:"freight-text-pro";src:url("https://use.typekit.net/af/390dad/000000000000000077359fcb/31/l?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n6&v=3") format("woff2"),url("https://use.typekit.net/af/390dad/000000000000000077359fcb/31/d?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n6&v=3") format("woff");font-display:swap;font-style:normal;font-weight:600;}
+/* Direct Typekit font-file URLs — load even from a local file:// path */
+/* Freight Sans Pro — Light (300) lives in a separate "lights" family */
+@font-face{font-family:"freight-sans-pro-lights";src:url("https://use.typekit.net/af/3b0752/0000000000000000775dd7cb/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n3&v=3") format("woff2"),url("https://use.typekit.net/af/3b0752/0000000000000000775dd7cb/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n3&v=3") format("woff");font-display:swap;font-style:normal;font-weight:300;}
+/* Freight Sans Pro — Regular (400) + Bold (700) */
+@font-face{font-family:"freight-sans-pro";src:url("https://use.typekit.net/af/7c02fe/0000000000000000775dd7dd/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/7c02fe/0000000000000000775dd7dd/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff");font-display:swap;font-style:normal;font-weight:400;}
+@font-face{font-family:"freight-sans-pro";src:url("https://use.typekit.net/af/71ccd4/0000000000000000775dd7da/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/71ccd4/0000000000000000775dd7da/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff");font-display:swap;font-style:normal;font-weight:700;}
+/* Freight Display Pro — Book (400) for the big "O", Bold (700) for tag + wordmark */
+@font-face{font-family:"freight-display-pro";src:url("https://use.typekit.net/af/c8c65e/000000000000000077359f9c/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/c8c65e/000000000000000077359f9c/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff");font-display:swap;font-style:normal;font-weight:400;}
+@font-face{font-family:"freight-display-pro";src:url("https://use.typekit.net/af/fed74c/000000000000000077359f97/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/fed74c/000000000000000077359f97/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff");font-display:swap;font-style:normal;font-weight:700;}
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -26,8 +29,9 @@
   :root{
     --brand-orange:rgb(240,82,60);
     --logo-coral:#ed5e46;
-    --font-serif:'freight-display-pro','freight-text-pro',Lora,Georgia,serif;
-    --font-sans:'freight-sans-pro','freight-sans','Geist',Lato,system-ui,sans-serif;
+    --font-serif:'freight-display-pro',Georgia,serif;
+    --font-sans:'freight-sans-pro','Geist',Lato,system-ui,sans-serif;
+    --font-sans-light:'freight-sans-pro-lights','freight-sans-pro','Geist',Lato,system-ui,sans-serif;
   }
   body{background:#0e0e0e;color:#e8e8e8;font-family:var(--font-sans);font-size:13px;min-height:100vh;}
   .layout{display:flex;min-height:100vh;}
@@ -84,9 +88,9 @@
   .tag-wrap{line-height:0;}
   .tag-wrap svg{display:block;}
 
-  .card-quote{font-family:var(--font-sans);font-weight:300;color:#15152b;}
-  .card-quote b{font-weight:700;}
-  .card-attr{font-family:var(--font-sans);font-weight:600;color:#15152b;opacity:.85;}
+  .card-quote{font-family:var(--font-sans-light);font-weight:300;color:#15152b;}
+  .card-quote b{font-family:var(--font-sans);font-weight:700;}
+  .card-attr{font-family:var(--font-sans);font-weight:700;color:#15152b;opacity:.85;}
 
   .card-wordmark{position:absolute;font-family:var(--font-serif);font-weight:700;color:var(--logo-coral);line-height:1;}
   .card-logo-img{position:absolute;height:auto;pointer-events:none;}
@@ -200,7 +204,8 @@
         <div id="card">
           <div class="card-grad" id="cardGrad"></div>
           <svg class="card-ring" id="cardRing" viewBox="0 0 1080 1350">
-            <text id="oText" text-anchor="middle" fill="#ffffff" font-family="'freight-display-pro','freight-text-pro',Georgia,'Times New Roman',serif">O</text>
+            <defs><style id="oFontStyle"></style></defs>
+            <text id="oText" text-anchor="middle" fill="#ffffff" font-family="'freight-o-embed','freight-display-pro',Georgia,serif">O</text>
           </svg>
           <div class="card-body" id="cardBody">
             <div id="cardInner">
@@ -230,7 +235,7 @@
 
   const el = id => document.getElementById(id);
   let CARD_W = 1080, CARD_H = 1350, PAD = 88;
-  let FONT_CSS = '';     // base64 freight font for export-safe knockout
+  let EMBED_CSS = '';    // base64 freight fonts so SVG text survives PNG export
   let logoDataUrl = '';  // uploaded logo
 
   function lighten(hex, amt){
@@ -266,18 +271,19 @@
   // ---- knockout "opinion" tag via SVG mask ----
   function buildTag(fs){
     const text = el('tagInput').value || ' ';
-    const fam = `'freight-embed','freight-display-pro','freight-text-pro',Lora,Georgia,serif`;
-    // measure
+    const fam = `'freight-tag-embed','freight-display-pro',Georgia,serif`;
+    const measFam = `'freight-display-pro',Georgia,serif`;
+    // measure (use the document font — same metrics as the embedded one)
     const meas=document.createElement('span');
     meas.style.cssText='position:absolute;visibility:hidden;white-space:pre;left:-9999px;top:0;';
-    meas.style.font=`700 ${fs}px ${fam}`;
+    meas.style.font=`700 ${fs}px ${measFam}`;
     meas.textContent=text;
     document.body.appendChild(meas);
     const tw=meas.getBoundingClientRect().width; meas.remove();
 
     const padX=Math.round(fs*0.30), padTop=Math.round(fs*0.12), padBot=Math.round(fs*0.20);
     const boxW=Math.round(tw+padX*2), boxH=Math.round(fs*0.86+padTop+padBot);
-    const fontStyle = FONT_CSS ? `<style>${FONT_CSS}</style>` : '';
+    const fontStyle = EMBED_CSS ? `<style>${EMBED_CSS}</style>` : '';
     const svg =
       `<svg xmlns="http://www.w3.org/2000/svg" width="${boxW}" height="${boxH}" viewBox="0 0 ${boxW} ${boxH}">`+
         `<defs>${fontStyle}<mask id="tagm" maskUnits="userSpaceOnUse" x="0" y="0" width="${boxW}" height="${boxH}">`+
@@ -295,6 +301,7 @@
   // then centre it vertically. Works regardless of which font resolves.
   function fitO(){
     const t=el('oText');
+    el('oFontStyle').textContent=EMBED_CSS;
     t.setAttribute('opacity', O_CFG.opacity);
     t.setAttribute('y', 0);
     t.setAttribute('font-size', 1000);
@@ -450,16 +457,23 @@
     finally{ b.disabled=false; }
   }
 
-  // try to embed freight bold as base64 so knockout text keeps the font on export
-  async function loadFontCss(){
-    try{
-      const url='https://use.typekit.net/af/9e97d3/00000000000000007735d62a/31/d?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n7&v=3';
-      const r=await fetch(url); if(!r.ok) return;
-      const buf=await r.arrayBuffer(); const bytes=new Uint8Array(buf);
-      let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
-      FONT_CSS=`@font-face{font-family:'freight-embed';src:url(data:font/woff;base64,${btoa(bin)}) format('woff');font-weight:700;font-style:normal;}`;
-      render();
-    }catch(e){}
+  // Embed Freight Display Pro as base64 so the SVG-rendered "O" and knockout "opinion"
+  // keep the real font when exported via html2canvas (which can't see document fonts).
+  async function embedFonts(){
+    const defs=[
+      {fam:'freight-o-embed',   w:400, url:'https://use.typekit.net/af/c8c65e/000000000000000077359f9c/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3'},
+      {fam:'freight-tag-embed', w:700, url:'https://use.typekit.net/af/fed74c/000000000000000077359f97/31/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3'},
+    ];
+    let css='';
+    for(const d of defs){
+      try{
+        const r=await fetch(d.url); if(!r.ok) continue;
+        const bytes=new Uint8Array(await r.arrayBuffer());
+        let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
+        css+=`@font-face{font-family:'${d.fam}';src:url(data:font/woff;base64,${btoa(bin)}) format('woff');font-weight:${d.w};font-style:normal;}`;
+      }catch(e){}
+    }
+    EMBED_CSS=css; render();
   }
 
   // init
@@ -469,7 +483,7 @@
   render();
   window.addEventListener('resize', fitPreview);
   document.fonts.ready.then(render);
-  loadFontCss();
+  embedFonts();
   loadFolderLogo('logo.png', true);
 </script>
 </body>
