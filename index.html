@@ -78,7 +78,7 @@
 
   #card{position:relative;overflow:hidden;background:#f5b393;}
   .card-grad{position:absolute;inset:0;}
-  .big-o{position:absolute;font-family:var(--font-serif);font-weight:400;color:#fff;line-height:1;pointer-events:none;white-space:pre;}
+  .big-o{position:absolute;font-family:'freight-display-pro','freight-text-pro',Georgia,'Times New Roman',serif;font-weight:400;color:#fff;line-height:1;pointer-events:none;white-space:pre;}
   .card-body{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;}
   #cardInner{display:block;}
   .tag-wrap{line-height:0;}
@@ -156,11 +156,20 @@
     <div>
       <div class="section-label">Logo</div>
       <div class="field">
-        <label>Upload official logo (PNG)</label>
+        <label>Load PNG from this folder</label>
+        <input type="text" id="logoName" value="logo.png">
+      </div>
+      <button class="btn btn-red" onclick="loadFolderLogo(document.getElementById('logoName').value)">↻ Load logo from folder</button>
+      <div class="field" style="margin-top:10px;">
+        <label>Or upload manually (PNG)</label>
         <input type="file" id="logoFile" accept="image/png,image/svg+xml,image/*" onchange="loadLogo(event)">
       </div>
+      <div class="field">
+        <label>Logo size <span class="val" id="logoSizeVal">5.0%</span></label>
+        <input type="range" id="logoSize" min="25" max="120" value="50" oninput="render()">
+      </div>
       <button class="btn btn-ghost" onclick="useTextLogo()">Use text wordmark instead</button>
-      <p class="tip">No upload? A freight-font “euobserver” wordmark is used by default.</p>
+      <p class="tip">Drop a PNG named <code>logo.png</code> next to this file and click load — it’s used automatically on open. A freight “euobserver” wordmark is the default.</p>
     </div>
 
     <hr>
@@ -213,7 +222,7 @@
   let selectedColor = COLORS[0];
 
   // Locked background "O" placement (from approved layout)
-  const O_CFG = { char:'O', opacity:1, size:1934, x:82, y:56 };
+  const O_CFG = { char:'O', opacity:1, size:1650, x:78, y:50 };
 
   const el = id => document.getElementById(id);
   let CARD_W = 1080, CARD_H = 1350, PAD = 88;
@@ -350,9 +359,10 @@
   // ---- logo ----
   function layoutLogo(){
     const img=el('logoImg'), wm=el('cardWordmark');
+    const pct=(+el('logoSize').value)/10; el('logoSizeVal').textContent=pct.toFixed(1)+'%';
     if(logoDataUrl){
       img.style.display='block'; wm.style.display='none';
-      img.style.height=Math.round(CARD_W*0.075)+'px';
+      img.style.height=Math.round(CARD_W*pct/100)+'px';
       img.style.right=Math.round(CARD_W*0.075)+'px';
       img.style.bottom=Math.round(CARD_H*0.05)+'px';
     } else { img.style.display='none'; wm.style.display='block'; }
@@ -362,6 +372,30 @@
     const fr=new FileReader();
     fr.onload=()=>{ logoDataUrl=fr.result; el('logoImg').src=logoDataUrl; render(); };
     fr.readAsDataURL(f);
+  }
+  // Load a PNG that sits in the same folder as this HTML file.
+  async function loadFolderLogo(name, silent){
+    name=(name||'logo.png').trim(); if(!name) return false;
+    const s=silent?null:el('status');
+    try{
+      const r=await fetch(name);
+      if(r.ok){
+        const blob=await r.blob();
+        await new Promise(res=>{ const fr=new FileReader();
+          fr.onload=()=>{ logoDataUrl=fr.result; el('logoImg').src=logoDataUrl; render(); res(); };
+          fr.readAsDataURL(blob); });
+        if(s){ s.textContent='✓ Loaded '+name+' from folder'; s.className='status ok'; }
+        return true;
+      }
+    }catch(e){}
+    // fallback: reference the file directly (works on file://, but export may need manual upload)
+    return await new Promise(res=>{
+      const test=new Image();
+      test.onload=()=>{ logoDataUrl=name; el('logoImg').src=name; render();
+        if(s){ s.textContent='✓ Using '+name+' from folder'; s.className='status ok'; } res(true); };
+      test.onerror=()=>{ if(s){ s.textContent='Couldn’t find '+name+' in this folder.'; s.className='status err'; } res(false); };
+      test.src=name;
+    });
   }
   function useTextLogo(){ logoDataUrl=''; el('logoFile').value=''; render(); }
 
@@ -419,6 +453,7 @@
   window.addEventListener('resize', fitPreview);
   document.fonts.ready.then(render);
   loadFontCss();
+  loadFolderLogo('logo.png', true);
 </script>
 </body>
 </html>
