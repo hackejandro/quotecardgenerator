@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EUObserver Opinion Card Generator</title>
+
+<!-- Freight family via Typekit -->
+<link rel="stylesheet" href="https://use.typekit.net/sdk5rbj.css">
+<!-- Geist (EUObserver sans) -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+@import url("https://p.typekit.net/p.css?s=1&k=sdk5rbj&ht=tk&f=13464.13465.13466.13467.13472&a=84107799&app=typekit&e=css");
+
+/* Direct Typekit font-file URLs (load even on a local file) */
+@font-face{font-family:"freight-text-pro";src:url("https://use.typekit.net/af/a9e142/00000000000000007735d61f/31/l?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/a9e142/00000000000000007735d61f/31/d?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n4&v=3") format("woff");font-display:swap;font-style:normal;font-weight:400;}
+@font-face{font-family:"freight-text-pro";src:url("https://use.typekit.net/af/9e97d3/00000000000000007735d62a/31/l?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/9e97d3/00000000000000007735d62a/31/d?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n7&v=3") format("woff");font-display:swap;font-style:normal;font-weight:700;}
+@font-face{font-family:"freight-text-pro";src:url("https://use.typekit.net/af/390dad/000000000000000077359fcb/31/l?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n6&v=3") format("woff2"),url("https://use.typekit.net/af/390dad/000000000000000077359fcb/31/d?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n6&v=3") format("woff");font-display:swap;font-style:normal;font-weight:600;}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --brand-orange:rgb(240,82,60);
+    --logo-coral:#ed5e46;
+    --font-serif:'freight-display-pro','freight-text-pro',Lora,Georgia,serif;
+    --font-sans:'Geist',Lato,system-ui,sans-serif;
+  }
+  body{background:#0e0e0e;color:#e8e8e8;font-family:var(--font-sans);font-size:13px;min-height:100vh;}
+  .layout{display:flex;min-height:100vh;}
+
+  .sidebar{width:300px;flex-shrink:0;background:#141414;border-right:1px solid #1e1e1e;padding:22px 18px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;height:100vh;}
+  .brand-logo{font-family:var(--font-serif);font-weight:700;font-size:22px;color:var(--logo-coral);}
+  .brand-sub{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#444;margin-top:3px;}
+  hr{border:none;border-top:1px solid #1e1e1e;}
+  .section-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#3f3f3f;margin-bottom:9px;}
+  .field{margin-bottom:11px;}
+  .field label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#555;margin-bottom:5px;}
+  input[type="text"],input[type="number"],textarea,select{display:block;width:100%;background:#1a1a1a;border:1px solid #242424;border-radius:3px;color:#ddd;padding:7px 9px;font-size:12px;font-family:inherit;outline:none;transition:border-color .12s;}
+  input:focus,textarea:focus,select:focus{border-color:rgba(240,82,60,.4);box-shadow:0 0 0 2px rgba(240,82,60,.1);}
+  textarea{height:140px;resize:vertical;line-height:1.55;}
+  input[type="range"]{width:100%;accent-color:var(--brand-orange);}
+  input[type="color"]{width:100%;height:30px;padding:2px;background:#1a1a1a;border:1px solid #242424;border-radius:3px;cursor:pointer;}
+  input[type="file"]{font-size:11px;color:#888;}
+  .row-3{display:flex;gap:6px;}
+  .row-3 .field{flex:1;}
+  .inline{display:flex;align-items:center;gap:8px;}
+  .inline input[type="checkbox"]{accent-color:var(--brand-orange);width:15px;height:15px;}
+  .inline label{margin:0;text-transform:none;letter-spacing:0;font-size:12px;color:#bbb;}
+  .val{font-size:11px;color:#666;float:right;}
+
+  .btn{display:block;width:100%;padding:9px 12px;border:none;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;text-align:center;margin-bottom:6px;transition:background .1s,opacity .1s;letter-spacing:.02em;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-red{background:var(--brand-orange);color:#fff;}
+  .btn-red:hover:not(:disabled){background:rgb(220,62,42);}
+  .btn-ghost{background:#1e1e1e;color:#999;border:1px solid #2a2a2a;}
+  .btn-ghost:hover:not(:disabled){background:#242424;color:#bbb;}
+  .btn-green{background:#162b1f;color:#4ade80;border:1px solid #1e3a2a;}
+  .btn-green:hover:not(:disabled){background:#1e3a28;}
+  .status{font-size:11px;color:#555;min-height:15px;line-height:1.4;margin-top:4px;}
+  .status.ok{color:#4ade80;}.status.err{color:#f87171;}
+  .tip{font-size:11px;color:#555;line-height:1.6;}
+  .tip code{background:#1e1e1e;color:#f0a08c;padding:1px 4px;border-radius:3px;font-size:10px;}
+
+  .presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+  .swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid #2a2a2a;transition:transform .1s,border-color .1s;}
+  .swatch:hover{transform:scale(1.1);}
+  .swatch.active{border-color:#fff;}
+
+  .preview-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:34px 30px;gap:14px;overflow:auto;}
+  .preview-hint{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#2c2c2c;}
+
+  #cardWrapper{position:relative;border-radius:3px;box-shadow:0 28px 72px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.04);flex-shrink:0;overflow:hidden;}
+  #cardScale{transform-origin:top left;}
+
+  #card{position:relative;overflow:hidden;background:#f5b393;}
+  .card-grad{position:absolute;inset:0;}
+  .big-o{position:absolute;font-family:var(--font-serif);font-weight:400;color:#fff;line-height:1;pointer-events:none;white-space:pre;}
+  .card-body{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;}
+  #cardInner{display:block;}
+  .tag-wrap{line-height:0;}
+  .tag-wrap svg{display:block;}
+
+  .card-quote{font-family:var(--font-sans);font-weight:400;color:#15152b;}
+  .card-quote b{font-weight:700;}
+  .card-attr{font-family:var(--font-sans);font-weight:600;color:#15152b;opacity:.85;}
+
+  .card-wordmark{position:absolute;font-family:var(--font-serif);font-weight:700;color:var(--logo-coral);line-height:1;}
+  .card-logo-img{position:absolute;height:auto;pointer-events:none;}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div>
+      <div class="brand-logo">euobserver</div>
+      <div class="brand-sub">Opinion Card Generator</div>
+    </div>
+
+    <hr>
+
+    <div>
+      <div class="section-label">Quote</div>
+      <div class="field">
+        <label>Quote text</label>
+        <textarea id="quoteInput" oninput="render()">Success or failure of the **migration pact** will ultimately depend **not** on **what was agreed** in Brussels, but on **how it is implemented** at Europe's borders.</textarea>
+      </div>
+      <p class="tip">Wrap words in <code>**double asterisks**</code> to make them bold. Quote marks are added automatically.</p>
+    </div>
+
+    <div class="field">
+      <label>Tag label</label>
+      <input type="text" id="tagInput" value="opinion" oninput="render()">
+    </div>
+    <div class="field">
+      <label>Attribution <span style="color:#444;text-transform:none;letter-spacing:0">(optional)</span></label>
+      <input type="text" id="attrInput" value="" placeholder="e.g. — Jane Doe, MEP" oninput="render()">
+    </div>
+
+    <hr>
+
+    <div>
+      <div class="section-label">Type</div>
+      <div class="field">
+        <label>Quote px <span class="val" id="qSizeVal">60</span></label>
+        <input type="range" id="quoteSize" min="32" max="92" value="60" oninput="render()">
+      </div>
+      <div class="inline" style="margin-bottom:10px;">
+        <input type="checkbox" id="autoFit" checked onchange="render()">
+        <label for="autoFit">Auto-shrink to fit</label>
+      </div>
+      <div class="inline">
+        <input type="checkbox" id="autoQuotes" checked onchange="render()">
+        <label for="autoQuotes">Add quotation marks</label>
+      </div>
+    </div>
+
+    <hr>
+
+    <div>
+      <div class="section-label">Background colour</div>
+      <div class="presets" id="presets"></div>
+      <div class="field">
+        <label>Angle <span class="val" id="angVal">110°</span></label>
+        <input type="range" id="angle" min="0" max="360" value="110" oninput="render()">
+      </div>
+      <p class="tip">Gradient fades from the chosen colour to white.</p>
+    </div>
+
+    <hr>
+
+    <div>
+      <div class="section-label">Logo</div>
+      <div class="field">
+        <label>Upload official logo (PNG)</label>
+        <input type="file" id="logoFile" accept="image/png,image/svg+xml,image/*" onchange="loadLogo(event)">
+      </div>
+      <button class="btn btn-ghost" onclick="useTextLogo()">Use text wordmark instead</button>
+      <p class="tip">No upload? A freight-font “euobserver” wordmark is used by default.</p>
+    </div>
+
+    <hr>
+
+    <div>
+      <div class="section-label">Format</div>
+      <select id="format" onchange="setFormat()">
+        <option value="1080x1350" selected>Portrait · 1080 × 1350 (IG)</option>
+        <option value="1080x1080">Square · 1080 × 1080</option>
+        <option value="1080x1920">Story · 1080 × 1920</option>
+      </select>
+    </div>
+
+    <hr>
+
+    <div>
+      <div class="section-label">Export</div>
+      <button class="btn btn-green" id="dlBtn" onclick="downloadCard()">↓ Download PNG</button>
+      <button class="btn btn-ghost" id="copyBtn" onclick="copyCard()">⧉ Copy to clipboard</button>
+      <div id="status" class="status"></div>
+    </div>
+  </aside>
+
+  <main class="preview-area">
+    <div class="preview-hint">live preview · edit on the left · download when ready</div>
+    <div id="cardWrapper">
+      <div id="cardScale">
+        <div id="card">
+          <div class="card-grad" id="cardGrad"></div>
+          <div class="big-o" id="bigO">O</div>
+          <div class="card-body" id="cardBody">
+            <div id="cardInner">
+              <div class="tag-wrap" id="tagWrap"></div>
+              <div class="card-quote" id="cardQuote"></div>
+              <div class="card-attr" id="cardAttr" style="display:none"></div>
+            </div>
+          </div>
+          <div class="card-wordmark" id="cardWordmark">euobserver</div>
+          <img class="card-logo-img" id="logoImg" style="display:none" alt="">
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script>
+  // Locked palette — start colours only; gradient always ends in white.
+  const COLORS = ['#EF523A','#7CEF3A','#3AD7EF','#AD3AEF'];
+  let selectedColor = COLORS[0];
+
+  // Locked background "O" placement (from approved layout)
+  const O_CFG = { char:'O', opacity:1, size:1934, x:82, y:56 };
+
+  const el = id => document.getElementById(id);
+  let CARD_W = 1080, CARD_H = 1350, PAD = 88;
+  let FONT_CSS = '';     // base64 freight font for export-safe knockout
+  let logoDataUrl = '';  // uploaded logo
+
+  function lighten(hex, amt){
+    const n=parseInt(hex.slice(1),16);
+    let r=(n>>16)&255, g=(n>>8)&255, b=n&255;
+    r=Math.round(r+(255-r)*amt); g=Math.round(g+(255-g)*amt); b=Math.round(b+(255-b)*amt);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function buildPresets(){
+    const box = el('presets'); box.innerHTML='';
+    COLORS.forEach((col,i)=>{
+      const s=document.createElement('div');
+      s.className='swatch'+(col===selectedColor?' active':'');
+      s.style.background=`linear-gradient(120deg, ${col}, ${lighten(col,0.55)}, #ffffff)`;
+      s.onclick=()=>{ selectedColor=col;
+        document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
+        s.classList.add('active'); render(); };
+      box.appendChild(s);
+    });
+  }
+
+  function setFormat(){
+    const [w,h]=el('format').value.split('x').map(Number);
+    CARD_W=w; CARD_H=h;
+    el('card').style.width=w+'px'; el('card').style.height=h+'px';
+    placeWordmark(); render();
+  }
+
+  function escXml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // ---- knockout "opinion" tag via SVG mask ----
+  function buildTag(fs){
+    const text = el('tagInput').value || ' ';
+    const fam = `'freight-embed','freight-display-pro','freight-text-pro',Lora,Georgia,serif`;
+    // measure
+    const meas=document.createElement('span');
+    meas.style.cssText='position:absolute;visibility:hidden;white-space:pre;left:-9999px;top:0;';
+    meas.style.font=`700 ${fs}px ${fam}`;
+    meas.textContent=text;
+    document.body.appendChild(meas);
+    const tw=meas.getBoundingClientRect().width; meas.remove();
+
+    const padX=Math.round(fs*0.30), padTop=Math.round(fs*0.12), padBot=Math.round(fs*0.20);
+    const boxW=Math.round(tw+padX*2), boxH=Math.round(fs*0.86+padTop+padBot);
+    const fontStyle = FONT_CSS ? `<style>${FONT_CSS}</style>` : '';
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${boxW}" height="${boxH}" viewBox="0 0 ${boxW} ${boxH}">`+
+        `<defs>${fontStyle}<mask id="tagm" maskUnits="userSpaceOnUse" x="0" y="0" width="${boxW}" height="${boxH}">`+
+          `<rect x="0" y="0" width="${boxW}" height="${boxH}" fill="#fff"/>`+
+          `<text x="${boxW/2}" y="${boxH/2}" text-anchor="middle" dominant-baseline="central" `+
+            `font-family="${fam}" font-weight="700" font-size="${fs}" fill="#000">${escXml(text)}</text>`+
+        `</mask></defs>`+
+        `<rect x="0" y="0" width="${boxW}" height="${boxH}" fill="#000" mask="url(#tagm)"/>`+
+      `</svg>`;
+    el('tagWrap').innerHTML=svg;
+    el('tagWrap').style.marginBottom=Math.round(fs*0.62)+'px';
+  }
+
+  function quoteHtml(raw){
+    let s=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    s=s.replace(/\*\*([\s\S]+?)\*\*/g,'<b>$1</b>');
+    if(el('autoQuotes').checked) s='“'+s.trim()+'”';
+    return s;
+  }
+
+  function render(){
+    // gradient — selected colour → light tint → white (end locked white)
+    const ang=+el('angle').value; el('angVal').textContent=ang+'°';
+    el('cardGrad').style.background=
+      `linear-gradient(${ang}deg, ${selectedColor} 0%, ${lighten(selectedColor,0.55)} 50%, #ffffff 100%)`;
+
+    // big O glyph — locked position/size
+    const o=el('bigO');
+    o.style.display='block';
+    o.textContent=O_CFG.char;
+    o.style.opacity=O_CFG.opacity;
+    o.style.fontSize=O_CFG.size+'px';
+    o.style.left=O_CFG.x+'%'; o.style.top=O_CFG.y+'%';
+    o.style.transform='translate(-50%,-54%)';
+
+    // attribution
+    const attr=el('attrInput').value.trim(), attrEl=el('cardAttr');
+    if(attr){ attrEl.style.display='block'; attrEl.textContent=attr; } else attrEl.style.display='none';
+
+    // tag + quote
+    const base=+el('quoteSize').value; el('qSizeVal').textContent=base;
+    buildTag(Math.round(base*1.04));
+    el('cardQuote').innerHTML=quoteHtml(el('quoteInput').value);
+    sizeQuote(base);
+
+    // wordmark / logo
+    el('cardWordmark').style.fontSize=Math.round(CARD_W*0.055)+'px';
+    layoutLogo();
+
+    fitPreview();
+  }
+
+  function sizeQuote(base){
+    const q=el('cardQuote');
+    const padTop=Math.round(CARD_H*0.065), padBottom=Math.round(CARD_H*0.135);
+    el('cardBody').style.padding=`${padTop}px ${PAD}px ${padBottom}px ${PAD}px`;
+    el('cardAttr').style.fontSize=Math.round(base*0.5)+'px';
+    el('cardAttr').style.marginTop=Math.round(base*0.55)+'px';
+
+    let size=base;
+    const apply=s=>{ q.style.fontSize=s+'px'; q.style.lineHeight=1.28; };
+    apply(size);
+    if(el('autoFit').checked){
+      const avail=CARD_H-padTop-padBottom;
+      let guard=0;
+      while(el('cardInner').offsetHeight>avail && size>24 && guard<80){ size-=1; apply(size); guard++; }
+    }
+  }
+
+  function fitPreview(){
+    const target=Math.min(540, window.innerHeight-150);
+    const scale=target/CARD_H;
+    el('cardScale').style.transform=`scale(${scale})`;
+    el('cardWrapper').style.width=(CARD_W*scale)+'px';
+    el('cardWrapper').style.height=(CARD_H*scale)+'px';
+  }
+
+  function placeWordmark(){
+    const wm=el('cardWordmark');
+    wm.style.right=Math.round(CARD_W*0.075)+'px';
+    wm.style.bottom=Math.round(CARD_H*0.05)+'px';
+  }
+
+  // ---- logo ----
+  function layoutLogo(){
+    const img=el('logoImg'), wm=el('cardWordmark');
+    if(logoDataUrl){
+      img.style.display='block'; wm.style.display='none';
+      img.style.height=Math.round(CARD_W*0.075)+'px';
+      img.style.right=Math.round(CARD_W*0.075)+'px';
+      img.style.bottom=Math.round(CARD_H*0.05)+'px';
+    } else { img.style.display='none'; wm.style.display='block'; }
+  }
+  function loadLogo(e){
+    const f=e.target.files[0]; if(!f) return;
+    const fr=new FileReader();
+    fr.onload=()=>{ logoDataUrl=fr.result; el('logoImg').src=logoDataUrl; render(); };
+    fr.readAsDataURL(f);
+  }
+  function useTextLogo(){ logoDataUrl=''; el('logoFile').value=''; render(); }
+
+  // ---- export ----
+  async function snapshot(scale){
+    await document.fonts.ready;
+    const card=el('card');
+    const clone=card.cloneNode(true);
+    clone.style.transform='none'; clone.style.position='fixed';
+    clone.style.left='-99999px'; clone.style.top='0';
+    document.body.appendChild(clone);
+    try{
+      return await html2canvas(clone,{width:CARD_W,height:CARD_H,scale,backgroundColor:null,useCORS:true,logging:false});
+    } finally { clone.remove(); }
+  }
+  async function downloadCard(){
+    const s=el('status'),b=el('dlBtn'); s.textContent='Rendering…'; s.className='status'; b.disabled=true;
+    try{
+      const c=await snapshot(2);
+      const a=document.createElement('a');
+      a.download=`euobserver-opinion-${CARD_W}x${CARD_H}.png`;
+      a.href=c.toDataURL('image/png'); a.click();
+      s.textContent='✓ Downloaded'; s.className='status ok';
+    }catch(e){ console.error(e); s.textContent='Export failed.'; s.className='status err'; }
+    finally{ b.disabled=false; }
+  }
+  async function copyCard(){
+    const s=el('status'),b=el('copyBtn'); s.textContent='Rendering…'; s.className='status'; b.disabled=true;
+    try{
+      const c=await snapshot(2);
+      const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+      await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+      s.textContent='✓ Copied to clipboard'; s.className='status ok';
+    }catch(e){ console.error(e); s.textContent='Copy not supported — use Download.'; s.className='status err'; }
+    finally{ b.disabled=false; }
+  }
+
+  // try to embed freight bold as base64 so knockout text keeps the font on export
+  async function loadFontCss(){
+    try{
+      const url='https://use.typekit.net/af/9e97d3/00000000000000007735d62a/31/d?primer=0c3d50e3ef3412cef9e76ae9541a8a04590cd15a498804b2eb27ad5118ab3b47&fvd=n7&v=3';
+      const r=await fetch(url); if(!r.ok) return;
+      const buf=await r.arrayBuffer(); const bytes=new Uint8Array(buf);
+      let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
+      FONT_CSS=`@font-face{font-family:'freight-embed';src:url(data:font/woff;base64,${btoa(bin)}) format('woff');font-weight:700;font-style:normal;}`;
+      render();
+    }catch(e){}
+  }
+
+  // init
+  buildPresets();
+  setFormat();
+  placeWordmark();
+  render();
+  window.addEventListener('resize', fitPreview);
+  document.fonts.ready.then(render);
+  loadFontCss();
+</script>
+</body>
+</html>
